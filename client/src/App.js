@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./App.css"; // Add your CSS styles here
 
-function App  () {
+function App() {
   const [videos, setVideos] = useState([]);
-  const [title, setTitle] = useState('');
-  const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [theme, setTheme] = useState("dark");
 
-
+  // Fetch videos from the backend
   const fetchVideos = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/uploads/videos');
+      const response = await axios.get("http://localhost:5000/api/uploads/videos");
       setVideos(response.data);
     } catch (err) {
-      console.error('Error fetching videos:', err.message);
+      console.error("Error fetching videos:", err.message);
     }
   };
 
@@ -21,89 +21,51 @@ function App  () {
     fetchVideos();
   }, []);
 
- 
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!file) {
-      alert('Please select a file to upload.');
-      return;
-    }
+  // Filter videos based on search query
+  const filteredVideos = videos.filter((video) =>
+    video.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    const formData = new FormData();
-    formData.append('video', file);
-    formData.append('title', title);
-
-    setLoading(true);
-
-    try {
-      const response = await axios.post('/api/uploads/upload-video', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      alert(response.data.message);
-      fetchVideos();
-    } catch (err) {
-      console.error('Error uploading video:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle video deletion
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this video?')) return;
-
-    try {
-      const response = await axios.delete(`/api/uploads/videos/${id}`);
-      alert(response.data.message);
-      fetchVideos(); // Refresh the video list
-    } catch (err) {
-      console.error('Error deleting video:', err.message);
-    }
+  // Toggle theme between light and dark
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   };
 
   return (
-    <div>
-      <h1>Video Manager</h1>
+    <div className={`video-manager ${theme}`}>
+      <div className="header">
+        <h1 className="video-manager-title">🎥 Explore Videos 🎨</h1>
+        <div className="controls">
+          <input
+            type="text"
+            placeholder="Search videos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+         <button onClick={toggleTheme} className="theme-toggle-button">
+  {theme === "light" ? (
+    <i className="fas fa-moon"></i> // Moon icon for light theme
+  ) : (
+    <i className="fas fa-sun"></i> // Sun icon for dark theme
+  )}
+</button>
 
-      {/* Upload Video */}
-      <form onSubmit={handleUpload} style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          placeholder="Video Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(e) => setFile(e.target.files[0])}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Uploading...' : 'Upload Video'}
-        </button>
-      </form>
+        </div>
+      </div>
 
-      {/* Display Videos */}
-      <h2>Uploaded Videos</h2>
-      <ul>
-        {videos.map((video) => (
-          <li key={video._id} style={{ marginBottom: '10px' }}>
-            <h3>{video.title}</h3>
-            <h3>Description</h3>
-            <video
-              src={video.url}
-              controls
-              width="300"
-              style={{ display: 'block', marginBottom: '10px' }}
-            ></video>
-            <button onClick={() => handleDelete(video._id)}>Delete</button>
-          </li>
+      {/* Display Videos in Grid */}
+      <div className="video-grid">
+        {filteredVideos.map((video) => (
+          <div key={video._id} className="video-item">
+            <video src={video.url} controls className="video" />
+            <h3 className="video-title">{video.title}</h3>
+            <p className="video-description">{video.Description || "No description available"}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
-};
+}
 
 export default App;

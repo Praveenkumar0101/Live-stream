@@ -6,11 +6,17 @@ const Media = require('../models/Media'); // Import the Media model
 const router = express.Router();
 
 // Video upload endpoint
+
 router.post('/upload-video', multer.single('video'), async (req, res) => {
   try {
     // Check if a file was uploaded
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // Check if the description is provided
+    if (!req.body.description) {
+      return res.status(400).json({ message: 'Description is required' });
     }
 
     // Upload the video to Cloudinary
@@ -32,7 +38,7 @@ router.post('/upload-video', multer.single('video'), async (req, res) => {
     const media = new Media({
       title: req.body.title || 'Untitled Video', // Default title if none is provided
       url: result.secure_url,
-      Description: result.Description,
+      description: req.body.description, // Ensure description is provided
     });
 
     await media.save();
@@ -47,6 +53,7 @@ router.post('/upload-video', multer.single('video'), async (req, res) => {
     res.status(500).json({ message: 'Error uploading video', error: err.message });
   }
 });
+
 
 // Get all videos endpoint
 router.get('/videos', async (req, res) => {
