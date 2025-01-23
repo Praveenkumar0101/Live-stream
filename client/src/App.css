@@ -1,4 +1,4 @@
-/* App.css */
+
 
 /* Base Styles */
 body {
@@ -131,3 +131,34 @@ body {
 .video-manager.dark .video-description {
   color: #aaa;
 }
+
+
+/* Rating to videos */
+
+.rating {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.rating .fas {
+  color: #ffcc00;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.rating .fas.rated {
+  color: #ff9900; /* Color for selected stars */
+}
+
+.rating .fas:hover {
+  color: #ffcc00; /* Color when hovering over a star */
+}
+
+
+
+
+
+
+
+
