@@ -21,10 +21,11 @@ const mediaSchema = new mongoose.Schema({
   description: { type: String },
   averageRating: { type: Number, default: 0 },
   numberOfRatings: { type: Number, default: 0 },
-  userRating: { type: Number, default: 0 }, // rating given by the current user
+  // rating given by the current user
   feedback: [{ 
     user: { type: String, required: true }, // user's name or ID
-    comment: { type: String, required: true }, // feedback comment
+    comment: { type: String, required: true }, 
+    userRating: { type: Number, default: 0 },// feedback comment
   }],
 }, { timestamps: true });
 
