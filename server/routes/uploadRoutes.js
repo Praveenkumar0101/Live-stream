@@ -1,154 +1,3 @@
-// const express = require('express');
-// const cloudinary = require('../config/cloudinary'); // Import Cloudinary config
-// const multer = require('../config/Multer'); // Import Multer config
-// const Media = require('../models/Media'); // Import the Media model
-
-// const router = express.Router();
-
-// // Video upload endpoint
-
-// router.post('/upload-video', multer.single('video'), async (req, res) => {
-//   try {
-//     // Check if a file was uploaded
-//     if (!req.file) {
-//       return res.status(400).json({ message: 'No file uploaded' });
-//     }
-
-//     // Check if the description is provided
-//     if (!req.body.description) {
-//       return res.status(400).json({ message: 'Description is required' });
-//     }
-
-//     // Upload the video to Cloudinary
-//     const result = await new Promise((resolve, reject) => {
-//       const stream = cloudinary.uploader.upload_stream(
-//         {
-//           resource_type: 'video', // Specify video resource
-//           folder: 'videos', // Save to a folder in Cloudinary
-//         },
-//         (error, response) => {
-//           if (error) return reject(error);
-//           resolve(response);
-//         }
-//       );
-//       stream.end(req.file.buffer);
-//     });
-
-//     // Save video details to MongoDB
-//     const media = new Media({
-//       title: req.body.title || 'Untitled Video', // Default title if none is provided
-//       url: result.secure_url,
-//       description: req.body.description, // Ensure description is provided
-//     });
-
-//     await media.save();
-
-//     // Respond with success
-//     res.status(201).json({
-//       message: 'Video uploaded successfully',
-//       media,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error uploading video', error: err.message });
-//   }
-// });
-
-
-
-
-
-
-// // Rate a video endpoint
-// router.post('/videos/:videoId/rating', async (req, res) => {
-//   try {
-//     const { videoId } = req.params;  // Video ID from the URL
-//     const { rating } = req.body;    // Rating from the request body
-
-//     const video = await Media.findById(videoId);
-//     if (!video) {
-//       return res.status(404).json({ message: 'Video not found' });
-//     }
-
-//     // Update the video rating field
-//     video.userRating = rating;
-//     await video.save();
-
-//     res.status(200).json({ message: 'Rating updated successfully' });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error updating rating', error: err.message });
-//   }
-// });
-
-
-
-
-
-// // Get all videos endpoint
-// router.get('/videos', async (req, res) => {
-//   try {
-//     const videos = await Media.find();
-//     res.status(200).json(videos);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error fetching videos', error: err.message });
-//   }
-// });
-
-// // Update video endpoint
-// router.put('/videos/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { title } = req.body;
-
-//     const video = await Media.findByIdAndUpdate(
-//       id,
-//       { title },
-//       { new: true, runValidators: true }
-//     );
-
-//     if (!video) {
-//       return res.status(404).json({ message: 'Video not found' });
-//     }
-
-//     res.status(200).json({
-//       message: 'Video updated successfully',
-//       video,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error updating video', error: err.message });
-//   }
-// });
-
-// // Delete video endpoint
-// router.delete('/videos/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     const video = await Media.findByIdAndDelete(id);
-
-//     if (!video) {
-//       return res.status(404).json({ message: 'Video not found' });
-//     }
-
-//     // Delete the video from Cloudinary
-//     await cloudinary.uploader.destroy(video.publicId, { resource_type: 'video' });
-
-//     res.status(200).json({
-//       message: 'Video deleted successfully',
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error deleting video', error: err.message });
-//   }
-// });
-
-// module.exports = router;
-
-
-
 
 
 const express = require('express');
@@ -213,6 +62,7 @@ console.log(result,'rdrdrdrdr');
 
 // Rate a video endpoint
 router.post('/videos/:videoId/rating', async (req, res) => {
+  console.log('rating')
   try {
     const { videoId } = req.params; // Video ID from the URL
     const { userId, rating } = req.body; // User ID and rating from the request body
@@ -240,14 +90,14 @@ router.post('/videos/:videoId/rating', async (req, res) => {
     // Recalculate the average rating
     const totalRatings = video.ratings.reduce((sum, rate) => sum + rate.rating, 0);
     video.numberOfRatings = video.ratings.length;
-    video.averageRating = totalRatings / video.numberOfRatings;
+    video.averageRating = totalRatings / 5;
 
     await video.save();
 
     res.status(200).json({
       message: 'Rating updated successfully',
       averageRating: video.averageRating,
-      numberOfRatings: video.numberOfRatings,
+      // numberOfRatings: video.numberOfRatings,
     });
   } catch (err) {
     console.error(err);
@@ -259,6 +109,8 @@ router.post('/videos/:videoId/rating', async (req, res) => {
 
 // Submit feedback for a video
 router.post('/videos/:videoId/feedback', async (req, res) => {
+  console.log(req.body);
+  
   try {
     const { videoId } = req.params;
     const { user, comment, userRating } = req.body;
@@ -289,14 +141,16 @@ router.post('/videos/:videoId/feedback', async (req, res) => {
     const feedback = {
       user,
       comment,
-      userRating: userRating || 0,  // Default rating to 0 if not provided
+      userRating: userRating || 0, 
       date: new Date(),
     };
 
+    let count = 0
     // Add feedback to the video and save
     video.feedback.push(feedback);
-    await video.save();
-
+   
+    const data = await video.save();
+    console.log(data,'vididididi')
     // Respond with the updated feedback array
     res.status(201).json({
       message: 'Feedback submitted successfully',
@@ -321,13 +175,7 @@ router.get('/videos/:videoId/feedback', async (req, res) => {
     }
 
     // Respond with feedback and ratings for the video
-    res.status(200).json({
-      videoId: videoId,
-      title: video.title,
-      feedback: video.feedback,
-      averageRating: calculateAverageRating(video.feedback),
-      totalRatings: video.feedback.length,
-    });
+    res.status(200).json({message:video});
   } catch (err) {
     console.error('Error fetching feedback:', err.message);
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -335,12 +183,12 @@ router.get('/videos/:videoId/feedback', async (req, res) => {
 });
 
 // Utility function to calculate the average rating
-const calculateAverageRating = (feedbackArray) => {
-  if (feedbackArray.length === 0) return 0;
+// const calculateAverageRating = (feedbackArray) => {
+//   if (feedbackArray.length === 0) return 0;
 
-  const totalRating = feedbackArray.reduce((sum, feedback) => sum + (feedback.rating || 0), 0);
-  return (totalRating / feedbackArray.length).toFixed(1); // Return the average rating rounded to 1 decimal place
-};
+//   const totalRating = feedbackArray.reduce((sum, feedback) => sum + (feedback.userRating || 0), 0);
+//   return (totalRating / 5)// Return the average rating rounded to 1 decimal place
+// };
 
 
 // Get all videos endpoint

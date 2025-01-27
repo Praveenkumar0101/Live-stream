@@ -182,6 +182,23 @@ body {
   background-color: #0056b3;
 }
 
+.average{
+  color: #28a745;
+}
+
+/* feedback button */ 
+
+.review-feedback-toggle {
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.review-feedback-toggle:hover {
+  color: #007bff; /* Highlight color */
+  transform: scale(1.05); /* Slight zoom */
+
+}
+
 
 
 

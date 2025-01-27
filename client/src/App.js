@@ -11,10 +11,10 @@ function App() {
   const [currentVideoId, setCurrentVideoId] = useState(null); // Track the video for feedback
   const [userRatings, setUserRatings] = useState({}); // State to track individual user ratings
   const [feedbackRating, setFeedbackRating] = useState(0); // State to store feedback rating
-  const [drop, setDrop] = useState(false)
+  const [dropdownStates, setDropdownStates] = useState({}); // State to track dropdown visibility for each video
 
   console.log(videos, 'all videos')
-  console.log(currentVideoId, 'iiiii');
+  // console.log(currentVideoId, 'iiiii');
 
   // Fetch videos from the backend
   const fetchVideos = async () => {
@@ -32,6 +32,8 @@ function App() {
 
   // Handle star rating change for video rating
   const handleRatingChange = async (videoId, rating) => {
+    console.log('iiiiii',videoId);
+    
     if (!userName) {
       alert("Please enter your name before rating.");
       return;
@@ -58,6 +60,9 @@ function App() {
     }
   };
 
+  
+
+
   // Handle star rating change for feedback submission
   const handleFeedbackRatingChange = (rating) => {
     setFeedbackRating(rating);
@@ -65,6 +70,8 @@ function App() {
 
   // Feedback submission
   const handleFeedbackSubmit = async () => {
+    console.log('hhhhhhhhhh');
+    
     if (!feedback || !userName) {
       alert("Please enter both your name and feedback.");
       return;
@@ -78,7 +85,6 @@ function App() {
       });
 
       console.log(hello, ' hello');
-
 
       // Update the feedback for this video in the state
       const updatedVideos = videos.map((video) =>
@@ -98,11 +104,12 @@ function App() {
     }
   };
 
-
-  const dropdown = () => {
-    setDrop(true)
-
-  }
+  const toggleDropdown = (videoId) => {
+    setDropdownStates((prevStates) => ({
+      ...prevStates,
+      [videoId]: !prevStates[videoId],
+    }));
+  };
 
   // Filter videos based on search query
   const filteredVideos = videos.filter((video) =>
@@ -113,6 +120,9 @@ function App() {
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   };
+
+ let count = 0;
+console.log(count,'count');
 
   return (
     <div className={`video-manager ${theme}`}>
@@ -140,25 +150,59 @@ function App() {
             <h3 className="video-title">{video.title}</h3>
             <p className="video-description">{video.Description || "No description available"}</p>
 
-            {/* Display Average Rating */}
-            <div className="rating">
-              <span>Average Rating: {video.averageRating.toFixed(1)} </span>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <i
-                  key={star}
-                  className={`fas fa-star ${star <= (userRatings[video._id] || 0) ? "rated" : ""}`}
-                  onClick={() => handleRatingChange(video._id, star)}
-                  style={{ cursor: "pointer" }}
-                ></i>
-              ))}
-            </div>
+
+<div className="rating">
+  {/* Calculate the average rating */}
+  <span>
+    Average Rating:{" "}
+    {video.feedback.length > 0
+      ? (video.feedback.reduce((total, ele) => total + ele.userRating, 0) / video.feedback.length).toFixed(1)
+      : 0}{" "}
+
+  </span>
+
+  {/* Display stars based on average rating */}
+  <div>
+    {(() => {
+      const averageRating =
+        video.feedback.length > 0
+          ? video.feedback.reduce((total, ele) => total + ele.userRating, 0) /
+            video.feedback.length
+          : 0;
+
+      // Generate stars with filled, half-filled, or empty states
+      return [1, 2, 3, 4, 5].map((star) => {
+        if (star <= averageRating) {
+          // Fully filled star
+          return <i key={star} className="fas fa-star rated" style={{ color: "gold" }}></i>;
+        } else if (star - averageRating < 1 && star - averageRating > 0) {
+          // Half-filled star
+          return <i key={star} className="fas fa-star-half-alt rated" style={{ color: "gold" }}></i>;
+        } else {
+          // Empty star
+          return <i key={star} className="far fa-star" style={{ color: "gray" }}></i>;
+        }
+      });
+    })()}
+  </div>
+</div>
+
+
 
             {/* Display Feedback */}
 
             <div className="feedback-section">
 
-              <h4 onClick={dropdown}>Feedback:</h4>
-              {drop && (
+            <h4
+  onClick={() => toggleDropdown(video._id)}
+  className="review-feedback-toggle"
+  title="Click to view all user ratings and feedback"
+>
+  Review feedback {dropdownStates[video._id] ? "▲" : "▼"}
+</h4>
+
+
+              {dropdownStates[video._id] && (
                 <div>
                   {video.feedback && video.feedback.length > 0 ? (
                     <ul>
@@ -182,8 +226,6 @@ function App() {
                   )}
                 </div>
               )}
-
-
 
               {/* Add Feedback Button */}
               <button
@@ -238,3 +280,4 @@ function App() {
 }
 
 export default App;
+
