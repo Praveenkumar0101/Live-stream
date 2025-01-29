@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const uploadRoutes = require('./routes/uploadRoutes');
+const Registration = require('./routes/Registration-login')
+const userRoutes = require ('./routes/User')
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ mongoose
 
 // Routes
 app.use('/api/uploads', uploadRoutes);
+app.use('/Registration', Registration);
+app.use('/user', userRoutes);
 
 // Default route
 // app.get('/', (req, res) => {

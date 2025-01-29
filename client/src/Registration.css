@@ -1,0 +1,147 @@
+/* Register.css */
+
+body, html {
+    height: 100%;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6; /* Light gray background */
+    font-family: Arial, sans-serif;
+}
+
+/* Center the main div */
+.Main-div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90vh; /* Full viewport height */
+    padding: 1rem;
+}
+
+.form-container {
+    width: 30%;
+    max-width: 900px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #4a5568; /* Dark gray */
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    position: relative;
+    right: 15px;
+    color: #718096; /* Medium gray */
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    position: relative;
+    right: 15px;
+    border: 1px solid #cbd5e0; /* Light gray */
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.form-input:focus {
+    border-color: #667eea; /* Blue */
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.form-button {
+    width: 100%;
+    background-color: #667eea; /* Blue */
+    color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    
+}
+
+.form-button:hover {
+    background-color: #5a67d8; /* Darker blue */
+}
+
+.message-success {
+    color: #38a169; /* Green */
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.message-error {
+    color: #e53e3e; /* Red */
+    text-align: center;
+    margin-top: 1rem;
+}
+
+
+/* login */
+
+/* Style for the "Log in" button text */
+.login-text {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #4a5568; /* Tailwind Gray-700 */
+    
+  }
+  
+  .login-button {
+    background-color: transparent;
+    color: #667eea; /* Tailwind Indigo-500 */
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+    text-decoration: none;
+  }
+  
+  .login-button:hover {
+    color: #5a67d8; /* Tailwind Indigo-600 */
+    text-decoration: none;
+  }
+  
+  .login-button:focus {
+    outline: none;
+    border: none;
+    
+  }
+
+  .login-heading{
+  background-color: transparent;
+    color: #667eea; /* Tailwind Indigo-500 */
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+    text-decoration: none;
+  }
